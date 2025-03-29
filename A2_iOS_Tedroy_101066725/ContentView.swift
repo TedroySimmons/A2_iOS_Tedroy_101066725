@@ -23,9 +23,10 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                //Displys the first product if available
+                // Search bar for products
                 SearchBar(text: $searchText)
-
+                
+                
                 List {
                     ForEach(filteredProducts) { product in
                         NavigationLink(destination: ProductDetailView(product: product)) {
