@@ -50,6 +50,7 @@ struct ContentView: View {
             }
             .navigationTitle("Products")
             .toolbar {
+                // Add button in navigation bar to open the add product sheet
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { isAddingProduct = true }) {
                         Label("Add", systemImage: "plus")
