@@ -31,8 +31,10 @@ struct ContentView: View {
                     ForEach(filteredProducts) { product in
                         NavigationLink(destination: ProductDetailView(product: product)) {
                             VStack(alignment: .leading) {
+                                // Display product name
                                 Text(product.name ?? "Unknown")
                                     .font(.headline)
+                                // Display product description
                                 Text(product.desc ?? "No description")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
