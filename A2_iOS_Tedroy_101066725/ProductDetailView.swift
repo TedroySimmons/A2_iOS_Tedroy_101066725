@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// Displays the information about a selected product
 struct ProductDetailView: View {
     var product: Product
 

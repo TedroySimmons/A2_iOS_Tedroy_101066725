@@ -82,7 +82,6 @@ struct ContentView: View {
             saveContext()
         }
     }
-
     private func saveContext() {
         do {
             try viewContext.save()
