@@ -2,7 +2,7 @@
 //  AddProductView.swift
 //  A2_iOS_Tedroy_101066725
 //
-//  Created by Tedroy Simmons on 2025-03-28.
+//  Created by Tedroy Simmons
 //
 
 import SwiftUI

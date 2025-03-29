@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  A2_iOS_Tedroy_101066725
 //
-//  Created by Tedroy Simmons on 2025-03-27.
+//  Created by Tedroy Simmons
 //
 
 import SwiftUI
