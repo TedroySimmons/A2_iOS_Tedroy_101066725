@@ -22,6 +22,7 @@ struct ProductDetailView: View {
             Text("Description: \(product.desc ?? "No description")")
                 .font(.body)
 
+            // Displays the product price
             Text("Price: $\(product.price, specifier: "%.2f")")
                 .font(.headline)
 
