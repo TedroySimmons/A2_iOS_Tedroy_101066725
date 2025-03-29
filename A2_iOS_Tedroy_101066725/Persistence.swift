@@ -54,7 +54,7 @@ struct PersistenceController {
         ]
 
         // Insert Default Products
-        for (id, name, desc, price, provider) in defaultProducts {
+        for (_, name, desc, price, provider) in defaultProducts {
             let newProduct = Product(context: context)
             newProduct.id = UUID()
             newProduct.name = name
