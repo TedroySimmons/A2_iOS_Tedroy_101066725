@@ -63,7 +63,7 @@ struct ContentView: View {
             }
         }
     }
-
+    // Filters products based on search trext
     private var filteredProducts: [Product] {
         if searchText.isEmpty {
             return Array(products)
