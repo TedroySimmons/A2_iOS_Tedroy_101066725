@@ -26,6 +26,7 @@ struct ProductDetailView: View {
             Text("Price: $\(product.price, specifier: "%.2f")")
                 .font(.headline)
 
+            // Displays the product provider
             Text("Provider: \(product.provider ?? "Unknown")")
                 .font(.subheadline)
                 .foregroundColor(.gray)
