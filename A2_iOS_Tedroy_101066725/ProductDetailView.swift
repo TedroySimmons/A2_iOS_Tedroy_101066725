@@ -13,6 +13,7 @@ struct ProductDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
+            // Displays the product name with large bold font
             Text(product.name ?? "Unknown Product")
                 .font(.largeTitle)
                 .bold()
