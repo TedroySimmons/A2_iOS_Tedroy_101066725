@@ -12,75 +12,74 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Product.name, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var products: FetchedResults<Product>
+
+    @State private var searchText = ""
+    @State private var isAddingProduct = false
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+            VStack {
+                SearchBar(text: $searchText)
+
+                List {
+                    ForEach(filteredProducts) { product in
+                        NavigationLink(destination: ProductDetailView(product: product)) {
+                            VStack(alignment: .leading) {
+                                Text(product.name ?? "Unknown")
+                                    .font(.headline)
+                                Text(product.desc ?? "No description")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
                     }
+                    .onDelete(perform: deleteProduct)
                 }
-                .onDelete(perform: deleteItems)
+                .listStyle(PlainListStyle())
+
+                Spacer()
             }
+            .navigationTitle("Products")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    Button(action: { isAddingProduct = true }) {
+                        Label("Add", systemImage: "plus")
                     }
                 }
             }
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            .sheet(isPresented: $isAddingProduct) {
+                AddProductView(isPresented: $isAddingProduct)
+                    .environment(\.managedObjectContext, viewContext)
             }
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+    private var filteredProducts: [Product] {
+        if searchText.isEmpty {
+            return Array(products)
+        } else {
+            return products.filter {
+                ($0.name?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                ($0.desc?.localizedCaseInsensitiveContains(searchText) ?? false)
             }
         }
     }
-}
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+    private func deleteProduct(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { products[$0] }.forEach(viewContext.delete)
+            saveContext()
+        }
+    }
 
-#Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    private func saveContext() {
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error saving: \(error.localizedDescription)")
+        }
+    }
 }

@@ -10,25 +10,6 @@ import CoreData
 struct PersistenceController {
     static let shared = PersistenceController()
 
-    @MainActor
-    static let preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-        }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
-
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
@@ -36,22 +17,56 @@ struct PersistenceController {
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores { _, error in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-        })
-        container.viewContext.automaticallyMergesChangesFromParent = true
+        }
+
+        // Ensure Default Products are Always Present
+        addDefaultProducts()
+    }
+
+    private func addDefaultProducts() {
+        let context = container.viewContext
+
+        // Check if the default products already exist to avoid duplicates
+        let fetchRequest: NSFetchRequest<Product> = Product.fetchRequest()
+        do {
+            let count = try context.count(for: fetchRequest)
+            if count >= 10 { return } 
+        } catch {
+            print("Failed to fetch products: \(error.localizedDescription)")
+        }
+
+        // Default Household Products
+        let defaultProducts: [(String, String, String, Double, String)] = [
+            ("P001", "Vacuum Cleaner", "Powerful suction for home cleaning", 199.99, "Dyson"),
+            ("P002", "Microwave Oven", "High-speed heating and cooking", 129.99, "Samsung"),
+            ("P003", "Refrigerator", "Energy-efficient cooling system", 899.99, "LG"),
+            ("P004", "Dishwasher", "Quiet and effective dish cleaning", 499.99, "Bosch"),
+            ("P005", "Washing Machine", "Top-loading, high-efficiency", 699.99, "Whirlpool"),
+            ("P006", "Air Purifier", "Removes allergens and pollutants", 249.99, "Philips"),
+            ("P007", "Coffee Maker", "Brews fresh coffee quickly", 79.99, "Nespresso"),
+            ("P008", "Blender", "High-speed blending for smoothies", 59.99, "NutriBullet"),
+            ("P009", "Toaster", "2-slice toaster with adjustable settings", 39.99, "Cuisinart"),
+            ("P010", "Iron", "Steam iron for wrinkle-free clothes", 49.99, "Rowenta")
+        ]
+
+        // Insert Default Products
+        for (id, name, desc, price, provider) in defaultProducts {
+            let newProduct = Product(context: context)
+            newProduct.id = UUID()
+            newProduct.name = name
+            newProduct.desc = desc
+            newProduct.price = price
+            newProduct.provider = provider
+        }
+
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save default products: \(error.localizedDescription)")
+        }
     }
 }
