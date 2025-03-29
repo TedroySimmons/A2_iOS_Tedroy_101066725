@@ -75,7 +75,7 @@ struct ContentView: View {
             }
         }
     }
-
+    // Delete selected products
     private func deleteProduct(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
