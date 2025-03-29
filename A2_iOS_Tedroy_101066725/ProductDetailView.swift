@@ -17,7 +17,8 @@ struct ProductDetailView: View {
             Text(product.name ?? "Unknown Product")
                 .font(.largeTitle)
                 .bold()
-
+            
+            // Displays the product description
             Text("Description: \(product.desc ?? "No description")")
                 .font(.body)
 
