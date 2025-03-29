@@ -26,7 +26,7 @@ struct ContentView: View {
                 // Search bar for products
                 SearchBar(text: $searchText)
                 
-                
+                // List of products that are filtered based on the search text
                 List {
                     ForEach(filteredProducts) { product in
                         NavigationLink(destination: ProductDetailView(product: product)) {
