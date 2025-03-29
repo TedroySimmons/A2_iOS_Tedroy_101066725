@@ -23,6 +23,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
+                //Displys the first product if available
                 SearchBar(text: $searchText)
 
                 List {
