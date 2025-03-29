@@ -68,6 +68,7 @@ struct ContentView: View {
         if searchText.isEmpty {
             return Array(products)
         } else {
+            // Filter products by name or description
             return products.filter {
                 ($0.name?.localizedCaseInsensitiveContains(searchText) ?? false) ||
                 ($0.desc?.localizedCaseInsensitiveContains(searchText) ?? false)
