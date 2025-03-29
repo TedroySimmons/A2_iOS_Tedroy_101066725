@@ -41,6 +41,7 @@ struct ContentView: View {
                             }
                         }
                     }
+                    // Swipe to delete
                     .onDelete(perform: deleteProduct)
                 }
                 .listStyle(PlainListStyle())
